@@ -40,7 +40,7 @@ namespace Platformer.Mechanics
         Vector2 move;
         SpriteRenderer spriteRenderer;
         internal Animator animator;
-        readonly PlatformerModel model = Simulation.GetModel<PlatformerModel>();
+        readonly PlatformerModel model = GetModel<PlatformerModel>();
 
         public Bounds Bounds => collider2d.bounds;
         public KeyCode leftKey;
@@ -90,7 +90,7 @@ namespace Platformer.Mechanics
                     };
 
                     // The ‘myEvent’ event will get queued up and sent every minute
-                    Events.CustomData("jumpPlayer", parameters);
+                    //Events.CustomData("jumpPlayer", parameters);
                 }
                 else if (Input.GetKeyUp(jumpKey))
                 {
@@ -170,12 +170,12 @@ namespace Platformer.Mechanics
             leftKey = pickedValues[0];
             rightKey = pickedValues[1];
             jumpKey = pickedValues[2];
-            FindObjectOfType<ControlsTextController>()?.SetControls();
+            FindFirstObjectByType<ControlsTextController>()?.SetControls();
         }
 
-        internal List<KeyCode> TakeRandom3()
+        private List<KeyCode> TakeRandom3()
         {
-            List<KeyCode> pickedValues = new List<KeyCode>();
+            var pickedValues = new List<KeyCode>();
             while(pickedValues.Count < 3)
             {
                 var pickedFromPool = keyPool[UnityEngine.Random.Range(0, keyPool.Count)];

@@ -64,7 +64,7 @@ namespace Platformer.Mechanics
         {
             transform.position = position;
             _body.position = position;
-            _body.velocity *= 0;
+            _body.linearVelocity *= 0;
             control.enabled = true;
         }
 

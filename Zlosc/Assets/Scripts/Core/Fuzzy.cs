@@ -10,13 +10,13 @@ namespace Platformer.Core
         public static bool ValueLessThan(float value, float test, float fuzz = 0.1f)
         {
             var delta = value - test;
-            return delta < 0 ? true : Random.value > delta / (fuzz * test);
+            return delta < 0 || Random.value > delta / (fuzz * test);
         }
 
         public static bool ValueGreaterThan(float value, float test, float fuzz = 0.1f)
         {
             var delta = value - test;
-            return delta < 0 ? Random.value > -1 * delta / (fuzz * test) : true;
+            return !(delta < 0) || Random.value > -1 * delta / (fuzz * test);
         }
 
         public static bool ValueNear(float value, float test, float fuzz = 0.1f)

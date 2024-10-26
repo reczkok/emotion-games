@@ -13,7 +13,7 @@ public class AnalyticsInputController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerController = FindObjectOfType<PlayerController>();
+        playerController = FindFirstObjectByType<PlayerController>();
         playerInput = GetComponentInChildren<TMP_InputField>();
         acceptButton = GetComponentInChildren<Button>();
         playerController.controlEnabled = false;

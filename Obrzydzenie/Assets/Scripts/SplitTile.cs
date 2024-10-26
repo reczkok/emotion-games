@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,7 +8,7 @@ public class SplitTile : MonoBehaviour
 
     private Vector3 offset;
 
-    public Vector2 ShadowOffset = new Vector2(2.0f, -2.0f);
+    public Vector2 ShadowOffset = new(2.0f, -2.0f);
     public Material ShadowMaterial;
     GameObject shadowGameobject;
     public int puzzleSize = 100;
@@ -79,7 +77,7 @@ public class SplitTile : MonoBehaviour
         if (distsq < 400.0f)
         {
             transform.position = GetCorrectPosition();
-            var puzzleController = FindObjectOfType<PuzzleController>();
+            var puzzleController = FindFirstObjectByType<PuzzleController>();
             if (puzzleController && puzzleController.HasCompleted())
             {
                 puzzleController.ChangeMap();

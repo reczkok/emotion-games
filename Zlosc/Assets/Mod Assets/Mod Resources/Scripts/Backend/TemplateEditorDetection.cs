@@ -7,6 +7,7 @@ using UnityEngine;
 #if UNITY_EDITOR
 
 using UnityEditor;
+using UnityEditor.Build;
 
 //Checks if we are in a certain template, as some scripts are template-specific.
 [InitializeOnLoad]
@@ -15,8 +16,8 @@ public class TemplateEditorDetection : Editor {
     static TemplateEditorDetection() {
 
         //Get the current definition symbols
-        string currentDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
-        List<string> allDefineSymbols = currentDefineSymbols.Split(';').ToList();
+        var currentDefineSymbols = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup));
+        var allDefineSymbols = currentDefineSymbols.Split(';').ToList();
 
         //Template core namespace classes used for detection
         var platformer = System.Type.GetType("Platformer.Core.Simulation", false);
@@ -34,8 +35,8 @@ public class TemplateEditorDetection : Editor {
         if (ballgame != null && !allDefineSymbols.Contains(ballgameDefine)) { allDefineSymbols.Add(ballgameDefine); }
 
         //apply the definition symbols
-        PlayerSettings.SetScriptingDefineSymbolsForGroup(
-            EditorUserBuildSettings.selectedBuildTargetGroup,
+        PlayerSettings.SetScriptingDefineSymbols(
+            NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup),
             string.Join(";", allDefineSymbols.ToArray()));
 
     }

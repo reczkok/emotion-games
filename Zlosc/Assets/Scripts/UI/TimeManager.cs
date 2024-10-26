@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Services.Analytics;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,17 +20,15 @@ public class TimeManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        timeValue = timeValue - Time.deltaTime;
+        timeValue -= Time.deltaTime;
         var min = (int)timeValue / 60;
         var s = timeValue % 60;
         if (min <= 0 && s <= 0)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>()
-            {
-            };
-            // The ‘myEvent’ event will get queued up and sent every minute
-            Events.CustomData("outOfTime", parameters);
-            Events.Flush();
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            // The myEvent event will get queued up and sent every minute
+            // Events.CustomData("outOfTime", parameters);
+            // Events.Flush();
             SceneManager.LoadScene(1);
         }
 

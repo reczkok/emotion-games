@@ -22,7 +22,7 @@ public class ControlsTextController : MonoBehaviour
 
     public void SetControls()
     {
-        playerController = FindObjectOfType<PlayerController>();
+        playerController = FindFirstObjectByType<PlayerController>();
         controlsText.text = $"Lewo: {playerController.leftKey} \n\nPrawo: {playerController.rightKey}\n\nSkok: {playerController.jumpKey}";
     }
 }
