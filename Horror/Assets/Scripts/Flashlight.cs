@@ -3,44 +3,41 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 public class Flashlight : MonoBehaviour
 {
-    public int MaxFlicker = 10;
-    public int MinFlicker = 2;
-    public float TimeDelay = 0.2f;
-    private Light Light;
-    public bool isFlickering = false;
-    private StarterAssetsInputs Input;
+    [FormerlySerializedAs("MaxFlicker")] public int maxFlicker = 10;
+    [FormerlySerializedAs("MinFlicker")] public int minFlicker = 2;
+    [FormerlySerializedAs("TimeDelay")] public float timeDelay = 0.2f;
+    private Light lightSource;
+    public bool isFlickering;
+    private StarterAssetsInputs input;
     // Start is called before the first frame update
     void Start()
     {
-        Light = GetComponent<Light>();
-        Input = FindObjectOfType<StarterAssetsInputs>();
+        lightSource = GetComponent<Light>();
+        input = FindFirstObjectByType<StarterAssetsInputs>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.flashlight)
-        {
-            if (!isFlickering)
-            {
-                isFlickering = true;
-                Input.flashlight = false;
-                StartCoroutine(FlashligthFlicker(Random.Range(MinFlicker,MaxFlicker)));
-            }
-        }
+        if (!input.flashlight) return;
+        if (isFlickering) return;
+        isFlickering = true;
+        input.flashlight = false;
+        StartCoroutine(FlashlightFlicker(Random.Range(minFlicker,maxFlicker)));
     }
 
-    public IEnumerator FlashligthFlicker(int flickerAmount)
+    public IEnumerator FlashlightFlicker(int flickerAmount)
     {
-        for(int i=0; i<flickerAmount; i++)
+        for(var i=0; i<flickerAmount; i++)
         {
-            Light.enabled = false;
-            yield return new WaitForSeconds(TimeDelay + Random.Range(0, 0.3f));
-            Light.enabled = true;
-            yield return new WaitForSeconds(TimeDelay);
+            lightSource.enabled = false;
+            yield return new WaitForSeconds(timeDelay + Random.Range(0, 0.3f));
+            lightSource.enabled = true;
+            yield return new WaitForSeconds(timeDelay);
         }
         isFlickering = false;
     }

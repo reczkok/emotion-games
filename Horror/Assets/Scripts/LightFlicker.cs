@@ -1,7 +1,10 @@
 using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.XR.CoreUtils;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit.Locomotion.Turning;
+using UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets;
 
 public class LightFlicker : MonoBehaviour
 {
@@ -13,35 +16,30 @@ public class LightFlicker : MonoBehaviour
     private Light[] lights;
     private bool eventStarted = false;
     private GameObject monster;
-    // Start is called before the first frame update
+
     void Start()
     {
         laughSound = GetComponent<AudioSource>();
-        lights = FindObjectsOfType<Light>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        lights = FindObjectsByType<Light>(FindObjectsInactive.Include, FindObjectsSortMode.None);
     }
 
     private void OnTriggerEnter(Collider collision)
     {
-        if (!eventStarted)
+        if (eventStarted) return;
+        var xrOrigin = FindFirstObjectByType<XROrigin>();
+        var moveProvide = FindFirstObjectByType<DynamicMoveProvider>();
+        var turnProvider = FindFirstObjectByType<ContinuousTurnProvider>();
+        turnProvider.turnSpeed = 0;
+        moveProvide.moveSpeed = 0;
+        eventStarted = true;
+        foreach (var sceneLight in lights)
         {
-            var player = FindObjectOfType<FirstPersonController>();
-            player.IsMovementBlocked = true;
-            eventStarted = true;
-            foreach (var light in lights)
-            {
-                light.gameObject.SetActive(false);
-            }
-            monster = GameObject.Instantiate(jumpScareSpawn, player.transform.position - (player.transform.forward * 2f), Quaternion.LookRotation(player.transform.forward));
-            player.transform.LookAt(dissapearDoor.transform, Vector3.up);
-            dissapearDoor.SetActive(false);
-            StartCoroutine(EnableLights());
+            sceneLight.gameObject.SetActive(false);
         }
+        monster = GameObject.Instantiate(jumpScareSpawn, xrOrigin.transform.position - (xrOrigin.transform.forward * 2f), Quaternion.LookRotation(xrOrigin.transform.forward));
+        xrOrigin.transform.LookAt(dissapearDoor.transform, Vector3.up);
+        dissapearDoor.SetActive(false);
+        StartCoroutine(EnableLights());
     }
 
 
@@ -52,7 +50,7 @@ public class LightFlicker : MonoBehaviour
         {
             yield return null;
         }
-        StartCoroutine(FindObjectOfType<Flashlight>().FlashligthFlicker(4));
+        StartCoroutine(FindFirstObjectByType<Flashlight>().FlashlightFlicker(4));
         monster.SetActive(false);
     }
 
@@ -61,15 +59,19 @@ public class LightFlicker : MonoBehaviour
 
         yield return new WaitForSeconds(3);
 
-        var player = FindObjectOfType<FirstPersonController>();
-        player.transform.LookAt(monster.transform, Vector3.up);
+        var xrOrigin = FindFirstObjectByType<XROrigin>();
+        var moveProvide = FindFirstObjectByType<DynamicMoveProvider>();
+        var turnProvider = FindFirstObjectByType<ContinuousTurnProvider>();
+        
+        xrOrigin.transform.LookAt(monster.transform, Vector3.up);
         StartCoroutine(StartMonster());
-        foreach (var light in lights)
+        foreach (var sceneLight in lights)
         {
-            light.gameObject.SetActive(true);
+            sceneLight.gameObject.SetActive(true);
         }
 
-        player.IsMovementBlocked = false;
+        turnProvider.turnSpeed = 60f;
+        moveProvide.moveSpeed = 2.5f;
        
         disableArea.ForEach(x =>
         {

@@ -22,11 +22,13 @@ public class FollowPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isFollowing && Wheelchair && playerTransform)
+        if (!isFollowing || !Wheelchair || !playerTransform) return;
+        if (Vector3.Distance(Wheelchair.transform.position, playerTransform.position) < 3f)
         {
-            Wheelchair.transform.position = Vector3.MoveTowards(Wheelchair.transform.position, playerTransform.position, speed * Time.deltaTime);
-            Wheelchair.transform.rotation = Quaternion.RotateTowards(Wheelchair.transform.rotation, startingRotation, speed * Time.deltaTime);
+            return;
         }
+        Wheelchair.transform.position = Vector3.MoveTowards(Wheelchair.transform.position, playerTransform.position, speed * Time.deltaTime);
+        Wheelchair.transform.rotation = Quaternion.RotateTowards(Wheelchair.transform.rotation, startingRotation, speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter(Collider other)
