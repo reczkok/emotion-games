@@ -10,7 +10,7 @@ namespace Assets.Scripts
     public class InteractableObject: MonoBehaviour, Interactable
     {
         public bool isInteractable = true;
-        public bool isCollectible = false;
+        public bool isCollectible;
         public bool IsInteractable()
         {
             return isInteractable;

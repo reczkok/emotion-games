@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class DialogueTrigger : MonoBehaviour
 {
-    // Start is called before the first frame update
     public Dialogue dialogue;
-    public bool isRepeatable = false;
-    public bool isUsed = false;
+    public bool isRepeatable;
+    public bool isUsed;
 
     public void TriggerDialogue()
     {

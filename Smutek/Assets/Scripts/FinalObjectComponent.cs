@@ -14,7 +14,7 @@ namespace Assets.Scripts
         private DialogueTrigger trigger;
         public Dialogue OnAllItemsCollectedDialogue;
         public Dialogue finalDialogue;
-        public bool finalSequenceStarted = false;
+        public bool finalSequenceStarted;
         public void Start()
         {
             interactable = GetComponent<InteractableObject>();
@@ -30,18 +30,18 @@ namespace Assets.Scripts
         public void PerformFinalAction()
         {
             EventManager.StopListening(UnityEvents.END_DIALOGUE_EVENT, PerformFinalAction);
-            foreach (var dialogue in FindObjectsOfType<DialogueTrigger>())
+            foreach (var dialogue in FindObjectsByType<DialogueTrigger>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             {
                 dialogue.isUsed = true;
                 dialogue.isRepeatable = false;
             }
-            if (interactable != null && trigger != null)
-            {
-                interactable.isInteractable = true;
-                trigger.dialogue = finalDialogue;
-                trigger.isUsed = false;
-                EventManager.StartListening(UnityEvents.END_DIALOGUE_EVENT, PerformQuit);
-            }
+
+            if (!interactable || !trigger) return;
+            
+            interactable.isInteractable = true;
+            trigger.dialogue = finalDialogue;
+            trigger.isUsed = false;
+            EventManager.StartListening(UnityEvents.END_DIALOGUE_EVENT, PerformQuit);
         }
 
         public void PerformQuit()

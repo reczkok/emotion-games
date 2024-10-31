@@ -2,13 +2,14 @@ using Assets.Scripts;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ResultCalculator : MonoBehaviour
 {
     public static ResultCalculator Instance { get; private set; }
-    public FinalObjectComponent FinalObjectToUnlock;
-    public float FinalValue = 8.0f;
-    public float CurrentValue = 0.0f;
+    [FormerlySerializedAs("FinalObjectToUnlock")] public FinalObjectComponent finalObjectToUnlock;
+    [FormerlySerializedAs("FinalValue")] public float finalValue = 8.0f;
+    [FormerlySerializedAs("CurrentValue")] public float currentValue;
 
     // Start is called before the first frame update
     private void Awake()
@@ -24,23 +25,13 @@ public class ResultCalculator : MonoBehaviour
             Instance = this;
         }
     }
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void AddValue(float valueToAdd)
     {
-        CurrentValue += valueToAdd;
-        if(CurrentValue >= FinalValue)
+        currentValue += valueToAdd;
+        if(currentValue >= finalValue)
         {
-            FinalObjectToUnlock.ItemsCollected();
+            finalObjectToUnlock.ItemsCollected();
         }
     }
 }

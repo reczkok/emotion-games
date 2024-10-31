@@ -10,7 +10,7 @@ public class RecordPlayer : MonoBehaviour, Interactable {
     public AudioClip backgroundMusic;
     public AudioClip scratch;
     private AudioSource source;
-    public bool recordPlayerActive = false;
+    public bool recordPlayerActive;
     public bool isInteractable = true;
 
     GameObject disc;

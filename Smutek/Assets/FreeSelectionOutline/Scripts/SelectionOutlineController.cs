@@ -35,7 +35,7 @@ public class SelectionOutlineController : MonoBehaviour
     private RenderTexture Mask, Outline;
     private Camera cam;
     private CommandBuffer cmd;
-    private bool Ini = false, Selected = false;
+    private bool Ini, Selected;
     public SelMode SelectionMode = SelMode.AndChildren;
     [Tooltip("The last two type will require rendering an extra Camera Depth Texture.")]
     public OutlineMode OutlineType = OutlineMode.ColorizeOccluded;

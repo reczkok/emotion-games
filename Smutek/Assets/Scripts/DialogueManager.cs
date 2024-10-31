@@ -3,14 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Readers;
 
 public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance { get; private set; }
-    private Queue<string> sentences;
+    private readonly Queue<string> _sentences = new();
     public Text dialogueText;
-    public bool isOpen = false;
-    public Animator animator;
+    public bool isOpen;
+    private Canvas _canvas;
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
@@ -22,46 +23,41 @@ public class DialogueManager : MonoBehaviour
         else
         {
             Instance = this;
+            _canvas = FindFirstObjectByType<Canvas>();
         }
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-        sentences = new Queue<string>();
-    }
+
 
     private void Update()
     {
-        if (isOpen)
+        if (!isOpen) return;
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Joystick1Button0))
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                DisplayNextSentence();
-            }
-        } 
+            DisplayNextSentence();
+        }
     }
 
     public void StartDialogue(Dialogue dialogue)
     {
-        sentences.Clear();
+        _sentences.Clear();
+        _canvas.enabled = true;
         foreach (var sentence in dialogue.sentences)
         {
-            sentences.Enqueue(sentence);
+            _sentences.Enqueue(sentence);
         }
         isOpen = true;
-        animator.SetBool("isOpen", true);
         DisplayNextSentence();
     }
 
     public void DisplayNextSentence()
     {
-        if(sentences.Count == 0)
+        if(_sentences.Count == 0)
         {
             EndDialogue();
             return;
         }
 
-        string sentence = sentences.Dequeue();
+        string sentence = _sentences.Dequeue();
         StopAllCoroutines();
         StartCoroutine(TypeSentence(sentence));
     }
@@ -69,7 +65,7 @@ public class DialogueManager : MonoBehaviour
     IEnumerator TypeSentence(string sentence)
     {
         dialogueText.text = "";
-        foreach(char letter in sentence.ToCharArray())
+        foreach(var letter in sentence)
         {
             dialogueText.text += letter;
             yield return null;
@@ -78,9 +74,9 @@ public class DialogueManager : MonoBehaviour
     
     void EndDialogue()
     {
+        _canvas.enabled = false;
         Debug.Log("End Dialogue");
         isOpen = false;
-        animator.SetBool("isOpen", false);
         EventManager.TriggerEvent(UnityEvents.END_DIALOGUE_EVENT);
     }
 }

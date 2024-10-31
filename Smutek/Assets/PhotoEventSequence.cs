@@ -3,33 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class PhotoEventSequence : MonoBehaviour
 {
-    public Dialogue AfterPhotosDialogue;
-    private int photoNumber = 6;
-    private int photosUsed = 0;
+    [FormerlySerializedAs("AfterPhotosDialogue")] public Dialogue afterPhotosDialogue;
+    private int _photoNumber = 6;
+    private int _photosUsed;
     // Start is called before the first frame update
     void Start()
     {
-        photoNumber = GetComponentsInChildren<PhotoInteraction>().Length;
+        _photoNumber = GetComponentsInChildren<PhotoInteraction>().Length;
         EventManager.StartListening(UnityEvents.PHOTO_DOWN, PhotoUsed);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void PhotoUsed()
     {
-        photosUsed += 1;
-        if(photosUsed >= photoNumber)
-        {
-            DialogueManager.Instance.StartDialogue(AfterPhotosDialogue);
-            EventManager.TriggerEvent(UnityEvents.END_PHOTO_EVENT);
-        }
+        _photosUsed += 1;
+        Debug.Log("Photo Used");
+        if (_photosUsed < _photoNumber) return;
+        DialogueManager.Instance.StartDialogue(afterPhotosDialogue);
+        EventManager.TriggerEvent(UnityEvents.END_PHOTO_EVENT);
     }
 
 }

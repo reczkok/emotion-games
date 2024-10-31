@@ -13,11 +13,10 @@ namespace SojaExiles
 
         public float speed = 5f;
         public float gravity = -15f;
-        public bool lockMovement = false;
+        public bool lockMovement;
 
-        Vector3 velocity;
-
-        bool isGrounded;
+        private Vector3 _velocity;
+        private bool _isGrounded;
         private void Start()
         {
             EventManager.StartListening(UnityEvents.MOVEMENT_LOCK, LockMovement);
@@ -26,31 +25,29 @@ namespace SojaExiles
         // Update is called once per frame
         void Update()
         {
-            if (!lockMovement)
-            {
-                float x = Input.GetAxis("Horizontal");
-                float z = Input.GetAxis("Vertical");
+            if (lockMovement) return;
+            var x = Input.GetAxis("Horizontal");
+            var z = Input.GetAxis("Vertical");
 
-                Vector3 move = transform.right * x + transform.forward * z;
+            var move = transform.right * x + transform.forward * z;
 
-                controller.Move(move * speed * Time.deltaTime);
+            controller.Move(move * (speed * Time.deltaTime));
 
-                velocity.y += gravity * Time.deltaTime;
+            _velocity.y += gravity * Time.deltaTime;
 
-                controller.Move(velocity * Time.deltaTime);
-            }
+            controller.Move(_velocity * Time.deltaTime);
         }
 
         public void LockMovement()
         {
             lockMovement = true;
-            velocity = Vector3.zero;
+            _velocity = Vector3.zero;
         }
 
         public void UnlockMovement()
         {
             lockMovement = false;
-            velocity = Vector3.zero;
+            _velocity = Vector3.zero;
         }
     }
 }

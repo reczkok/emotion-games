@@ -10,22 +10,20 @@ public class EventManager : MonoBehaviour
     private static EventManager eventManager;
 
     // Start is called before the first frame update
-    public static EventManager instance
+    public static EventManager Instance
     {
         get
         {
+            if (eventManager) return eventManager;
+            eventManager = FindFirstObjectByType<EventManager>();
+
             if (!eventManager)
             {
-                eventManager = FindObjectOfType(typeof(EventManager)) as EventManager;
-
-                if (!eventManager)
-                {
-                    Debug.LogError("There needs to be one active EventManger script on a GameObject in your scene.");
-                }
-                else
-                {
-                    eventManager.Init();
-                }
+                Debug.LogError("There needs to be one active EventManger script on a GameObject in your scene.");
+            }
+            else
+            {
+                eventManager.Init();
             }
 
             return eventManager;
@@ -33,16 +31,12 @@ public class EventManager : MonoBehaviour
     }
     void Init()
     {
-        if (eventDictionary == null)
-        {
-            eventDictionary = new Dictionary<string, UnityEvent>();
-        }
+        eventDictionary ??= new Dictionary<string, UnityEvent>();
     }
 
     public static void StartListening(string eventName, UnityAction listener)
     {
-        UnityEvent thisEvent = null;
-        if (instance.eventDictionary.TryGetValue(eventName, out thisEvent))
+        if (Instance.eventDictionary.TryGetValue(eventName, out var thisEvent))
         {
             thisEvent.AddListener(listener);
         }
@@ -50,15 +44,14 @@ public class EventManager : MonoBehaviour
         {
             thisEvent = new UnityEvent();
             thisEvent.AddListener(listener);
-            instance.eventDictionary.Add(eventName, thisEvent);
+            Instance.eventDictionary.Add(eventName, thisEvent);
         }
     }
 
     public static void StopListening(string eventName, UnityAction listener)
     {
-        if (eventManager == null) return;
-        UnityEvent thisEvent = null;
-        if (instance.eventDictionary.TryGetValue(eventName, out thisEvent))
+        if (!eventManager) return;
+        if (Instance.eventDictionary.TryGetValue(eventName, out var thisEvent))
         {
             thisEvent.RemoveListener(listener);
         }
@@ -66,8 +59,7 @@ public class EventManager : MonoBehaviour
 
     public static void TriggerEvent(string eventName)
     {
-        UnityEvent thisEvent = null;
-        if (instance.eventDictionary.TryGetValue(eventName, out thisEvent))
+        if (Instance.eventDictionary.TryGetValue(eventName, out var thisEvent))
         {
             thisEvent.Invoke();
         }
