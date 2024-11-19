@@ -7,9 +7,9 @@ using UnityEngine.Serialization;
 public class ResultCalculator : MonoBehaviour
 {
     public static ResultCalculator Instance { get; private set; }
-    [FormerlySerializedAs("FinalObjectToUnlock")] public FinalObjectComponent finalObjectToUnlock;
-    [FormerlySerializedAs("FinalValue")] public float finalValue = 8.0f;
-    [FormerlySerializedAs("CurrentValue")] public float currentValue;
+    public FinalObjectComponent finalObjectToUnlock;
+    public float finalValue = 7.0f;
+    public float currentValue;
 
     // Start is called before the first frame update
     private void Awake()
@@ -29,6 +29,7 @@ public class ResultCalculator : MonoBehaviour
     public void AddValue(float valueToAdd)
     {
         currentValue += valueToAdd;
+        Debug.Log("Current Value: " + currentValue);
         if(currentValue >= finalValue)
         {
             finalObjectToUnlock.ItemsCollected();

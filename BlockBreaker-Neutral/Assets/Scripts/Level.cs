@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class Level : MonoBehaviour
 {
 
-    int breakableBlocks = 0;
+    int breakableBlocks;
     [Range(1, 1.5f)] [SerializeField] float LevelSpeed=1f;
     // Start is called before the first frame update
     void Start()
@@ -18,20 +18,15 @@ public class Level : MonoBehaviour
 
     public void CountBreakableBlocks()
     {
-        Block[] allLevelBlocks = FindObjectsOfType<Block>();
+        var allLevelBlocks = FindObjectsByType<Block>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         foreach (var block in allLevelBlocks)
         {
-            if (block.tag == "Breakable")
+            if (block.CompareTag("Breakable"))
             {
                 breakableBlocks++;
             }
         }
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
     }
 
     public void RemoveBlock()
@@ -41,11 +36,11 @@ public class Level : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
-        if(breakableBlocks % 5 == 0)
-        {
-            LevelSpeed = LevelSpeed + 0.1f;
-            LevelSpeed = Mathf.Clamp(LevelSpeed, 1, 1.5f);
-            Time.timeScale = LevelSpeed;
-        }
+
+        if (breakableBlocks % 5 != 0) return;
+        
+        LevelSpeed += 0.1f;
+        LevelSpeed = Mathf.Clamp(LevelSpeed, 1, 1.5f);
+        Time.timeScale = LevelSpeed;
     }
 }

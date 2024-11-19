@@ -19,8 +19,8 @@ namespace SojaExiles
         void Start()
         {
             Cursor.lockState = CursorLockMode.Locked;
-            EventManager.StartListening(UnityEvents.CAMERA_LOCK, LockCamera);
-            EventManager.StartListening(UnityEvents.CAMERA_UNLOCK, UnlockCamera);
+            EventManager.StartListening(UnityEvents.CameraLock, LockCamera);
+            EventManager.StartListening(UnityEvents.CameraUnlock, UnlockCamera);
         }
 
         // Update is called once per frame

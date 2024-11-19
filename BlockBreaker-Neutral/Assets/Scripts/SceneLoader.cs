@@ -6,13 +6,22 @@ using UnityEngine.SceneManagement;
 public class SceneLoader : MonoBehaviour
 {
     [SerializeField]
-    List<GameObject> Levels = new List<GameObject>();
+    List<GameObject> Levels = new();
     int levelIndex = -1;
-    GameObject currentlySpawned = null;
+    GameObject currentlySpawned;
     Level Level;
+    
+    void Start()
+    {
+        if (SceneManager.GetActiveScene().buildIndex >= 2) return;
+        
+        DontDestroyOnLoad(gameObject);
+        Level = FindFirstObjectByType<Level>();
+        LoadNextScene();
+    }
+    
     public void LoadNextScene()
     {
-
         levelIndex += 1;
         if(levelIndex >= 2)
         {
@@ -22,15 +31,15 @@ public class SceneLoader : MonoBehaviour
         {
             Destroy(currentlySpawned);
         }
-        currentlySpawned = Instantiate(Levels[levelIndex], Level.gameObject.transform);
-       
+        Debug.Log(Levels[levelIndex]);
+        currentlySpawned = Instantiate(Levels[levelIndex], transform);
     }
 
     public void LoadPreviousScene()
     {
-        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         if(currentSceneIndex != 0)
-        SceneManager.LoadScene(0);
+            SceneManager.LoadScene(0);
     }
 
     public void LoadByName(string sceneToLoad)
@@ -38,25 +47,14 @@ public class SceneLoader : MonoBehaviour
         SceneManager.LoadScene(sceneToLoad);
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        if (SceneManager.GetActiveScene().buildIndex < 2)
-        {
-            GameObject.DontDestroyOnLoad(this.gameObject);
-            Level = FindObjectOfType<Level>();
-            LoadNextScene();
-        }
-    }
-
     public void ReloadCurrentLevel()
     {
         if (currentlySpawned != null)
         {
-        //    Destroy(currentlySpawned);
+            //    Destroy(currentlySpawned);
         }
-        FindObjectOfType<Ball>()?.Reset();
-        FindObjectOfType<Paddle>()?.Reset();
+        FindFirstObjectByType<Ball>()?.Reset();
+        FindFirstObjectByType<Paddle>()?.Reset();
       //  currentlySpawned = Instantiate(Levels[levelIndex], Level.gameObject.transform);
     }
 

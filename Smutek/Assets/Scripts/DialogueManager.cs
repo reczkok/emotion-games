@@ -77,6 +77,6 @@ public class DialogueManager : MonoBehaviour
         _canvas.enabled = false;
         Debug.Log("End Dialogue");
         isOpen = false;
-        EventManager.TriggerEvent(UnityEvents.END_DIALOGUE_EVENT);
+        EventManager.TriggerEvent(UnityEvents.EndDialogueEvent);
     }
 }

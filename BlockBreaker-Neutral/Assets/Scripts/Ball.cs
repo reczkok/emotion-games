@@ -14,7 +14,7 @@ public class Ball : MonoBehaviour
     [SerializeField] AudioClip[] hitSounds = null;
 
     Vector2 paddleToBallVector;
-    Rigidbody2D rigidbody;
+    Rigidbody2D ballBody;
     bool isLaunched = false;
     public bool canLaunch = false;
     Vector2 startPos;
@@ -25,58 +25,53 @@ public class Ball : MonoBehaviour
         {
             paddleToBallVector = transform.position - paddle.transform.position;
         }
-        rigidbody = GetComponent<Rigidbody2D>();
+        ballBody = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!isLaunched && canLaunch)
-        {
-            LockBallToPaddle();
-            LaunchOnMouseClick();
-        }
+        if (isLaunched || !canLaunch) return;
+        
+        LockBallToPaddle();
+        LaunchOnMouseClick();
     }
 
     private void LaunchOnMouseClick()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            isLaunched = true;
-            rigidbody.velocity = new Vector2(LaunchSlide,LaunchHeight);
-        }
+        if (!Input.GetMouseButtonDown(0)) return;
+        
+        isLaunched = true;
+        ballBody.linearVelocity = new Vector2(LaunchSlide,LaunchHeight);
     }
 
     private void LockBallToPaddle()
     {
-        if (paddle != null)
-        {
-            Vector2 paddlePos = new Vector2(paddle.transform.position.x, paddle.transform.position.y);
-            transform.position = paddlePos + paddleToBallVector;
-        }
+        if (!paddle) return;
+        
+        var paddlePos = new Vector2(paddle.transform.position.x, paddle.transform.position.y);
+        transform.position = paddlePos + paddleToBallVector;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Vector2 velocityTweak = new Vector2(
+        var velocityTweak = new Vector2(
             UnityEngine.Random.Range(0, RandomFactor), 
             -UnityEngine.Random.Range(0, RandomFactor)
             );
 
-        if (isLaunched)
-        {
-            AudioClip clip = hitSounds[UnityEngine.Random.Range(0, hitSounds.Length)];
-            GetComponent<AudioSource>().PlayOneShot(clip);
-            rigidbody.velocity += velocityTweak;
-        }
+        if (!isLaunched) return;
+        
+        var clip = hitSounds[UnityEngine.Random.Range(0, hitSounds.Length)];
+        GetComponent<AudioSource>().PlayOneShot(clip);
+        ballBody.linearVelocity += velocityTweak;
     }
 
     public void Reset()
     {
-        rigidbody.velocity = Vector2.zero;
+        ballBody.linearVelocity = Vector2.zero;
         transform.position = startPos;
         canLaunch = true;
         isLaunched = false;
-        
     }
 }

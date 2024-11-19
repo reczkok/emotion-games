@@ -20,14 +20,17 @@ namespace Assets.Scripts
         {
             Debug.Log("Action");
             var dialog = GetComponent<DialogueTrigger>();
-            if (dialog)
+            if (!dialog) return;
+            dialog.TriggerDialogue();
+            if (isCollectible)
             {
-                dialog.TriggerDialogue();
-                if (isCollectible)
-                {
-                    EventManager.StartListening(UnityEvents.END_DIALOGUE_EVENT, OnCollect);
-                }
+                EventManager.StartListening(UnityEvents.EndDialogueEvent, OnCollect);
             }
+        }
+        
+        public void MoveCanvasTo(Transform target)
+        {
+            CanvasPositioner.Instance.RepositionCanvas(target);
         }
 
         public virtual void OnCollect()
@@ -35,6 +38,5 @@ namespace Assets.Scripts
             ResultCalculator.Instance.AddValue(1);
             Destroy(gameObject);
         }
-
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
 using Unity.Services.Analytics;
-using Unity.Services.Analytics.Editor.Settings;
 using Unity.Services.Core;
 using Unity.Services.Core.Analytics;
 using Unity.Services.Core.Environments;
@@ -33,11 +32,11 @@ public class AnalyticsController : MonoBehaviour
 
     public async Task InitializeAnalytics()
     {
-        var textInput = FindObjectOfType<TMP_InputField>();
+        var textInput = FindFirstObjectByType<TMP_InputField>();
         userId = textInput.text;
         var options = new InitializationOptions();
         options.SetEnvironmentName("production");
-        options.SetAnalyticsUserId(userId);
+        UnityServices.ExternalUserId = userId;
         await UnityServices.InitializeAsync(options);
     }
 
@@ -50,7 +49,7 @@ public class AnalyticsController : MonoBehaviour
 
     public void SendAnalyticsEvent(Dictionary<string, object> parameters, string eventName, bool enforceFlush = false)
     {
-        AnalyticsService.Instance.CustomData(eventName, parameters);
+        // AnalyticsService.Instance.CustomData(eventName, parameters);
         if (enforceFlush)
         {
             AnalyticsService.Instance.Flush();

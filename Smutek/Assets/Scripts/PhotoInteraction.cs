@@ -1,3 +1,4 @@
+using System;
 using Assets.Scripts;
 using SojaExiles;
 using System.Collections;
@@ -8,26 +9,39 @@ public class PhotoInteraction : MonoBehaviour
 {
     public bool isInteractable = true;
     private bool _isHeld;
-    private Vector3 _photoPos;
-    private Quaternion _photoRot;
-    private Camera _mainCamera;
-    private Transform _cameraTransform;
+    private Canvas _canvas;
 
-    public bool IsInteractable()
+    private void Awake()
     {
-        return isInteractable;
+        _canvas = FindFirstObjectByType<Canvas>();
+        Debug.Log(_canvas);
     }
 
     public void PickedUp()
     {
         if (_isHeld || !isInteractable) return;
         Debug.Log("Zoom In");
-        _isHeld = true;
+        StartCoroutine(SetIsHeld());
         var dialog = GetComponent<DialogueTrigger>();
-        if (dialog)
-        {
-            dialog.TriggerDialogue();
-        }
+        if (!dialog) return;
+
+        RepositionCanvas();
+        dialog.TriggerDialogue();
+    }
+    
+    private IEnumerator SetIsHeld()
+    {
+        yield return new WaitForSeconds(1);
+        _isHeld = true;
+    }
+    
+    private void RepositionCanvas()
+    {
+        _canvas.transform.SetParent(transform);
+        _canvas.transform.localScale = new Vector3(0.2f, 0.3f, 0.3f);
+        _canvas.transform.localPosition = new Vector3(0, 5, 1);
+        _canvas.transform.localRotation = Quaternion.Euler(90, 0, 0);
+        _canvas.enabled = true;
     }
     
     public void PutDown()
@@ -35,6 +49,6 @@ public class PhotoInteraction : MonoBehaviour
         if (!_isHeld) return;
         _isHeld = false;
         isInteractable = false;
-        EventManager.TriggerEvent(UnityEvents.PHOTO_DOWN);
+        EventManager.TriggerEvent(UnityEvents.PhotoDown);
     }
 }

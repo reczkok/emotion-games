@@ -1,100 +1,41 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class SplitTile : MonoBehaviour
 {
-    public Vector2Int mIndex;
+    public Vector3 correctPosition;
     public PuzzleController.Direction[] mDirections = new PuzzleController.Direction[4]; //0 = UP, 1 = RIGHT, 2 = BOTTOM, 3 = LEFT
+    private XRGrabInteractable interactable;
+    private SpriteRenderer spriteRenderer;
+    public bool isCorrect;
 
-    private Vector3 offset;
-
-    public Vector2 ShadowOffset = new(2.0f, -2.0f);
-    public Material ShadowMaterial;
-    GameObject shadowGameobject;
-    public int puzzleSize = 100;
-
-    private Vector3 GetCorrectPosition()
+    private void Start()
     {
-        return new Vector3(mIndex.x * puzzleSize, mIndex.y * puzzleSize, 0.0f);
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        interactable = GetComponent<XRGrabInteractable>();
     }
 
-    public SpriteRenderer mSpriteRenderer = null;
-
-    // Start is called before the first frame update
-    void Start()
+    public void OnPickUp(SelectEnterEventArgs _)
     {
-        //create a new gameobject to be used as drop shadow
-        shadowGameobject = new GameObject("Shadow");
-
-        //create a new SpriteRenderer for Shadow gameobject
-        SpriteRenderer shadowSpriteRenderer = shadowGameobject.AddComponent<SpriteRenderer>();
-
-        //set the shadow gameobject's sprite to the original sprite
-        shadowSpriteRenderer.sprite = mSpriteRenderer.sprite;
-        //set the shadow gameobject's material to the shadow material we created
-        shadowSpriteRenderer.material = ShadowMaterial;
-
-        //update the sorting layer of the shadow to always lie behind the sprite
-        shadowSpriteRenderer.sortingLayerName = mSpriteRenderer.sortingLayerName;
-        shadowSpriteRenderer.sortingOrder = mSpriteRenderer.sortingOrder - 1;
+        spriteRenderer.sortingOrder = 100;
     }
-
-    // Update is called once per frame
-    void Update()
+    
+    public void OnLetGo(SelectExitEventArgs _)
     {
-        
-    }
-    void OnMouseDown()
-    {
-        if (EventSystem.current.IsPointerOverGameObject())
+        spriteRenderer.sortingOrder = 0;
+        var dist = (transform.localPosition - correctPosition).sqrMagnitude;
+        if (!(dist < 400.0f)) return;
+        transform.localPosition = correctPosition;
+        spriteRenderer.sortingOrder = -100;
+        interactable.enabled = false;
+        isCorrect = true;
+        var puzzleController = FindFirstObjectByType<PuzzleController>();
+        if (puzzleController && puzzleController.HasCompleted())
         {
-            return;
+            puzzleController.ChangeMap();
         }
-        mSpriteRenderer.sortingOrder = 1;
-
-        offset = transform.position - Camera.main.ScreenToWorldPoint(
-            new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f));
-    }
-
-    void OnMouseDrag()
-    {
-        if (EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
-        }
-        Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f);
-        Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
-        transform.position = curPosition;
-    }
-    void OnMouseUp()
-    {
-        if (EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
-        }
-        float distsq = (transform.position - GetCorrectPosition()).sqrMagnitude;
-        //Debug.Log("Dist Sqr: " + distsq.ToString());
-        if (distsq < 400.0f)
-        {
-            transform.position = GetCorrectPosition();
-            var puzzleController = FindFirstObjectByType<PuzzleController>();
-            if (puzzleController && puzzleController.HasCompleted())
-            {
-                puzzleController.ChangeMap();
-            }
-        }
-        mSpriteRenderer.sortingOrder = 0;
-    }
-
-    void LateUpdate()
-    {
-        //update the position and rotation of the sprite's shadow with moving sprite
-        shadowGameobject.transform.localPosition = transform.localPosition + (Vector3)ShadowOffset;
-        shadowGameobject.transform.localRotation = transform.localRotation;
-    }
-
-    private void OnDestroy()
-    {
-        Destroy(shadowGameobject);
     }
 }

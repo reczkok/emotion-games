@@ -5,46 +5,38 @@ using UnityEngine;
 public class Block : MonoBehaviour
 {
     // Start is called before the first frame update
-    [SerializeField] AudioClip DestroySound = null;
-    [SerializeField] GameObject OnDeleteParticle = null;
+    [SerializeField] AudioClip DestroySound;
+    [SerializeField] GameObject OnDeleteParticle;
     [SerializeField] int MaxHits = 3;
-    [SerializeField] Sprite[] HitSprites=null;
-    Level level = null;
-    SpriteRenderer spriteRenderer = null;
+    [SerializeField] Sprite[] HitSprites;
+    Level level;
+    SpriteRenderer spriteRenderer;
     void Start()
     {
-        level = FindObjectOfType<Level>();
+        level = FindFirstObjectByType<Level>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         MaxHits = 3;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (tag == "Breakable")
+        if (!CompareTag("Breakable")) return;
+        
+        MaxHits--;
+        if (collision.gameObject.GetComponent<Ball>() != null && MaxHits <= 0)
         {
-            MaxHits--;
-            if (collision.gameObject.GetComponent<Ball>() != null && MaxHits <= 0)
-            {
-                AudioSource.PlayClipAtPoint(DestroySound, collision.transform.position);
-                level.RemoveBlock();
-                PlayVFX();
-                Destroy(gameObject);
-                return;
-            }
-            spriteRenderer.sprite = HitSprites[MaxHits-1];
-
+            AudioSource.PlayClipAtPoint(DestroySound, collision.transform.position);
+            level.RemoveBlock();
+            PlayVFX();
+            Destroy(gameObject);
+            return;
         }
+        spriteRenderer.sprite = HitSprites[MaxHits-1];
     }
 
     private void PlayVFX()
     {
-        GameObject sparkless = Instantiate(OnDeleteParticle, transform.position,transform.rotation);
-        Destroy(sparkless, 1f);
+        var sparkles = Instantiate(OnDeleteParticle, transform.position,transform.rotation);
+        Destroy(sparkles, 1f);
     }
 }

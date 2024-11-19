@@ -6,18 +6,18 @@ namespace Curves
 {
     static class Constants
     {
-        public static readonly float EPSILON = Mathf.Epsilon;
-        public static readonly int DEFAULT_INTERVALS = 10;
-        public static readonly int DEFAULT_MAX_ITERATIONS = 15;
+        public static readonly float Epsilon = Mathf.Epsilon;
+        private static readonly int DefaultIntervals = 10;
+        private static readonly int DefaultMaxIterations = 15;
         public static readonly float PI = Mathf.PI;
     }
 
-    static public class Math
+    public static class Math
     {
         public static int Binomial(int n, int k)
         {
-            int val = 1;
-            for (int i = 1; i <= k; i++)
+            var val = 1;
+            for (var i = 1; i <= k; i++)
             {
                 val *= n + 1 - i;
                 val /= i;
@@ -27,7 +27,7 @@ namespace Curves
 
         public static bool IsWithinZeroAndOne(float x)
         {
-            return x >= -Constants.EPSILON && x <= (1.0 + Constants.EPSILON);
+            return x >= -Constants.Epsilon && x <= (1.0 + Constants.Epsilon);
         }
     }
 
@@ -38,11 +38,11 @@ namespace Curves
         public BinomialCoefficients(int n)
         {
             N = n;
-            int center = N / 2;
-            int k = 0;
+            var center = N / 2;
+            var k = 0;
 
             mCoefficients = new List<int>(N + 1);
-            for (int i = 0; i < N + 1; ++i)
+            for (var i = 0; i < N + 1; ++i)
             {
                 mCoefficients.Add(0);
             }
@@ -92,11 +92,11 @@ namespace Curves
         {
             N = n;
             mPolynomialPairs = new List<PolynomialPair>(N + 1);
-            for (int i = 0; i < N + 1; ++i)
+            for (var i = 0; i < N + 1; ++i)
             {
                 mPolynomialPairs.Add(new PolynomialPair());
             }
-            for (int i = 0; i <= N; i++)
+            for (var i = 0; i <= N; i++)
             {
                 mPolynomialPairs[i].t = i;
                 mPolynomialPairs[i].one_minus_t = N - i;
@@ -157,12 +157,12 @@ namespace Curves
 
         public float Length()
         {
-            return UnityEngine.Mathf.Sqrt(x * x + y * y);
+            return Mathf.Sqrt(x * x + y * y);
         }
 
         public void Normalize()
         {
-            float len = Length();
+            var len = Length();
             x /= len;
             y /= len;
         }
@@ -181,14 +181,14 @@ namespace Curves
 
         public void Rotate(float angle, Vec2 pivot)
         {
-            float s = UnityEngine.Mathf.Sin(angle);
-            float c = UnityEngine.Mathf.Cos(angle);
+            var s = UnityEngine.Mathf.Sin(angle);
+            var c = UnityEngine.Mathf.Cos(angle);
 
             x -= pivot.x;
             y -= pivot.y;
 
-            float xnew = x * c - y * s;
-            float ynew = x * s + y * c;
+            var xnew = x * c - y * s;
+            var ynew = x * s + y * c;
 
             x = xnew + pivot.x;
             y = ynew + pivot.y;
@@ -238,10 +238,10 @@ namespace Curves
 
         public bool Equals(Vec2 other)
         {
-            bool equals = true;
-            for (int axis = 0; axis < Vec2.Size; axis++)
+            var equals = true;
+            for (var axis = 0; axis < Vec2.Size; axis++)
             {
-                if (Mathf.Abs((this)[axis] - other[axis]) >= Constants.EPSILON)
+                if (Mathf.Abs((this)[axis] - other[axis]) >= Constants.Epsilon)
                 {
                     equals = false;
                     break;
@@ -287,7 +287,7 @@ namespace Curves
 
         public bool Equals(ExtremeValue other)
         {
-            return axis == other.axis && Mathf.Abs(t - other.t) < Constants.EPSILON;
+            return axis == other.axis && Mathf.Abs(t - other.t) < Constants.Epsilon;
         }
     };
 
@@ -313,7 +313,7 @@ namespace Curves
             polynomialCoefficients = new PolynomialCoefficients(N);
             mControlVec2s = new List<Vec2>(N + 1);
 
-            for (int i = 0; i < controlVec2s.Count; i++)
+            for (var i = 0; i < controlVec2s.Count; i++)
             {
                 mControlVec2s.Add(new Vec2(controlVec2s[i]));
             }
@@ -325,7 +325,7 @@ namespace Curves
             binomialCoefficients = new BinomialCoefficients(N);
             polynomialCoefficients = new PolynomialCoefficients(N);
             mControlVec2s = new List<Vec2>(N + 1);
-            for (int i = 0; i < other.mControlVec2s.Count; i++)
+            for (var i = 0; i < other.mControlVec2s.Count; i++)
             {
                 mControlVec2s.Add(new Vec2(other[i]));
             }
@@ -350,8 +350,8 @@ namespace Curves
 
         public Bezier Derivative()
         {
-            List<Vec2> derivativeWeights = new List<Vec2>(N);
-            for (int i = 0; i < N; i++)
+            var derivativeWeights = new List<Vec2>(N);
+            for (var i = 0; i < N; i++)
             {
                 derivativeWeights.Add(new Vec2((mControlVec2s[i + 1] - mControlVec2s[i]) * N));
             }
@@ -362,7 +362,7 @@ namespace Curves
         public float ValueAt(float t, int axis)
         {
             float sum = 0;
-            for (int n = 0; n < N + 1; n++)
+            for (var n = 0; n < N + 1; n++)
             {
                 sum += binomialCoefficients[n] * polynomialCoefficients[n].ValueAt(t) * mControlVec2s[n][axis];
             }
@@ -371,7 +371,7 @@ namespace Curves
 
         public Vec2 ValueAt(float t)
         {
-            Vec2 p = new Vec2();
+            var p = new Vec2();
             p.x = ValueAt(t, 0);
             p.y = ValueAt(t, 1);
             return p;

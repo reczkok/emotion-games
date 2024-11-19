@@ -6,12 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
     path: Assets/Scenes/StartMenu.unity
     guid: 60faad0e8cbca8241804bc74c152dfa8
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/AnalyticsInputScene.unity
     guid: 0465839702be95a419eb60e6718ac15b
   - enabled: 1
@@ -27,3 +24,4 @@ EditorBuildSettings:
     path: Assets/Scenes/EndingScene.unity
     guid: ffd9b84ff3999fd489babacc0dfc8729
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

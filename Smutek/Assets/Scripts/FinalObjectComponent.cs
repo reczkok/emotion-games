@@ -5,43 +5,54 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace Assets.Scripts
 {
     public class FinalObjectComponent : MonoBehaviour
     {
-        private InteractableObject interactable;
         private DialogueTrigger trigger;
         public Dialogue OnAllItemsCollectedDialogue;
         public Dialogue finalDialogue;
         public bool finalSequenceStarted;
-        public void Start()
+        private XRSimpleInteractable _interactable;
+
+        private void Awake()
         {
-            interactable = GetComponent<InteractableObject>();
+            _interactable = GetComponent<XRSimpleInteractable>();
             trigger = GetComponent<DialogueTrigger>();
         }
 
         public void ItemsCollected()
         {
-            EventManager.StartListening(UnityEvents.END_DIALOGUE_EVENT, PerformFinalAction);
+            finalSequenceStarted = true;
+            _interactable.enabled = true;
+            EventManager.StartListening(UnityEvents.EndDialogueEvent, PerformFinalAction);
+            CanvasPositioner.Instance.OverlayCanvasOnScreen();
             DialogueManager.Instance.StartDialogue(OnAllItemsCollectedDialogue);
+        }
+        
+        public void HandleInteraction(Transform target)
+        {
+            CanvasPositioner.Instance.RepositionCanvas(target);
+            trigger.TriggerDialogue();
+            _interactable.enabled = false;
         }
 
         public void PerformFinalAction()
         {
-            EventManager.StopListening(UnityEvents.END_DIALOGUE_EVENT, PerformFinalAction);
+            EventManager.StopListening(UnityEvents.EndDialogueEvent, PerformFinalAction);
             foreach (var dialogue in FindObjectsByType<DialogueTrigger>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             {
                 dialogue.isUsed = true;
                 dialogue.isRepeatable = false;
             }
 
-            if (!interactable || !trigger) return;
+            if (!trigger) return;
             
-            interactable.isInteractable = true;
             trigger.dialogue = finalDialogue;
             trigger.isUsed = false;
-            EventManager.StartListening(UnityEvents.END_DIALOGUE_EVENT, PerformQuit);
+            EventManager.StartListening(UnityEvents.EndDialogueEvent, PerformQuit);
         }
 
         public void PerformQuit()

@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EndingScene.unity
     guid: ffd9b84ff3999fd489babacc0dfc8729
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: ca2212111b3c5934fb05047b97efd06d, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 6001f4f0c88f6e84d9edc3dfb312af05, type: 2}
+  m_UseUCBPForAssetBundles: 0

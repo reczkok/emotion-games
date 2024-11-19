@@ -6,22 +6,22 @@ using System.IO;
 public class SpriteUtils
 {
     public static Sprite CreateSpriteFromTexture2D(
-        Texture2D SpriteTexture, 
+        Texture2D spriteTexture, 
         int x, 
         int y, 
         int w, 
         int h, 
-        float PixelsPerUnit = 1.0f, 
+        float pixelsPerUnit = 1.0f, 
         SpriteMeshType spriteType = SpriteMeshType.Tight)
     {
-        Sprite NewSprite = Sprite.Create(
-            SpriteTexture, 
+        var newSprite = Sprite.Create(
+            spriteTexture, 
             new Rect(x, y, w, h), 
             new Vector2(0, 0), 
-            PixelsPerUnit, 
+            pixelsPerUnit, 
             0, 
             spriteType);
-        return NewSprite;
+        return newSprite;
     }
 
     public static Texture2D LoadTexture(string resourcePath)

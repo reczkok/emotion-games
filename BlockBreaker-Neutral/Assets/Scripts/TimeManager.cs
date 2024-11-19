@@ -14,7 +14,7 @@ public class TimeManager : MonoBehaviour
     {
         text = GetComponent<TextMeshProUGUI>();
         timeValue = 5 * 60;
-        GameObject.DontDestroyOnLoad(gameObject.transform.parent.gameObject);
+        DontDestroyOnLoad(gameObject.transform.parent.gameObject);
     }
 
     // Update is called once per frame
@@ -28,9 +28,6 @@ public class TimeManager : MonoBehaviour
             Dictionary<string, object> parameters = new Dictionary<string, object>()
             {
             };
-            // The ‘myEvent’ event will get queued up and sent every minute
-            Events.CustomData("outOfTime", parameters);
-            Events.Flush();
             SceneManager.LoadScene(2);
             enabled = false;
         }
