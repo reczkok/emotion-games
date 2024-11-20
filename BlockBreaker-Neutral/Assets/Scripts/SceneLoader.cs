@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class SceneLoader : MonoBehaviour
 {
-    [SerializeField]
-    List<GameObject> Levels = new();
-    int levelIndex = -1;
-    GameObject currentlySpawned;
-    Level Level;
-    
+    [SerializeField] private List<GameObject> levels = new();
+    private int levelIndex = -1;
+    private GameObject currentlySpawned;
+
     void Start()
     {
         if (SceneManager.GetActiveScene().buildIndex >= 2) return;
         
         DontDestroyOnLoad(gameObject);
-        Level = FindFirstObjectByType<Level>();
+        FindFirstObjectByType<Level>();
         LoadNextScene();
     }
     
@@ -31,8 +30,7 @@ public class SceneLoader : MonoBehaviour
         {
             Destroy(currentlySpawned);
         }
-        Debug.Log(Levels[levelIndex]);
-        currentlySpawned = Instantiate(Levels[levelIndex], transform);
+        currentlySpawned = Instantiate(levels[levelIndex], transform);
     }
 
     public void LoadPreviousScene()
@@ -54,7 +52,6 @@ public class SceneLoader : MonoBehaviour
             //    Destroy(currentlySpawned);
         }
         FindFirstObjectByType<Ball>()?.Reset();
-        FindFirstObjectByType<Paddle>()?.Reset();
       //  currentlySpawned = Instantiate(Levels[levelIndex], Level.gameObject.transform);
     }
 

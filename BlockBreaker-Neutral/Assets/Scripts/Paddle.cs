@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class Paddle : MonoBehaviour
 {
@@ -10,10 +12,12 @@ public class Paddle : MonoBehaviour
     [SerializeField] float maxX = 15f;
     Vector2 startPos;
     public bool canMove;
+    public GameObject xrGrabObj;
     // Start is called before the first frame update
     void Start()
     {
         startPos = transform.position;
+        xrGrabObj = transform.GetChild(0).gameObject;
     }
 
     // Update is called once per frame
@@ -21,14 +25,8 @@ public class Paddle : MonoBehaviour
     {
         if (!canMove) return;
         
-        var mouseXinUnits = Input.mousePosition.x / Screen.width * ScreenWidthInUnits;
-        mouseXinUnits = Mathf.Clamp(mouseXinUnits, minX, maxX);
-        var newPosition = new Vector2(mouseXinUnits, transform.position.y);
-        transform.position = newPosition;
-    }
-
-    public void Reset()
-    {
-        transform.position = startPos;
+        var grabObjX = xrGrabObj.transform.position.x;
+        var newX = Mathf.Clamp(grabObjX, minX, maxX);
+        transform.position = new Vector2(newX, transform.position.y);
     }
 }

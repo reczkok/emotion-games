@@ -34,12 +34,13 @@ public class Ball : MonoBehaviour
         if (isLaunched || !canLaunch) return;
         
         LockBallToPaddle();
-        LaunchOnMouseClick();
+        LaunchOnControllerA();
     }
 
-    private void LaunchOnMouseClick()
+    private void LaunchOnControllerA()
     {
-        if (!Input.GetMouseButtonDown(0)) return;
+        // Launch on any XR controller button
+        if (!Input.GetKeyDown(KeyCode.Joystick1Button0)) return;
         
         isLaunched = true;
         ballBody.linearVelocity = new Vector2(LaunchSlide,LaunchHeight);
@@ -70,7 +71,7 @@ public class Ball : MonoBehaviour
     public void Reset()
     {
         ballBody.linearVelocity = Vector2.zero;
-        transform.position = startPos;
+        LockBallToPaddle();
         canLaunch = true;
         isLaunched = false;
     }
